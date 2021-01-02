@@ -1,0 +1,20 @@
+import setuptools
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setuptools.setup(
+    name="ppctree",
+    version="0.1",
+    description="tree handling for ppc work",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    classifiers=[
+        "Programming Language :: Python :: 3",
+    ],
+    url="https://github.com/skulick/ppctree",    
+    author="Seth Kulick",
+    author_email="skulick@ldc.upenn.edu",
+    packages=setuptools.find_packages(),
+    python_requires='>=3.7',
+)
