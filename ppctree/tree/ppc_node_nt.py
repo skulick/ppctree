@@ -72,15 +72,16 @@ class PPCNodeNt(PPCNode):
         return ret
 
     def parse_label(self, label):
+        """Parse label into bare_label, ftags, trace/gap"""
         # special case
         if label in ('.', '._NT'):
-            print('period label')
+            logger.info('period label')
             self.bare_label = label
             self.ftags = ''
             self.trace_index = None
             self.gap_index = None
             return
-        
+
         mtch = RE_LABEL_TRACE.search(label) or RE_LABEL_GAP.search(label)
         assert mtch is not None, \
             f'unable to parse {label}'
@@ -97,115 +98,6 @@ class PPCNodeNt(PPCNode):
 
         tmp = mdict.get('gap', None)
         self.gap_index = None if tmp is None else int(tmp)
-
-    # def parse_label(self, label):
-    #     """Parse the label for a nonterminal node."""
-    #     tmp = self._get_trace_or_gap_index(label)
-    #     self.ftags = ""
-    #     hyphen_x = tmp.find("-")
-    #     if hyphen_x > -1:
-    #         self.ftags = tmp[hyphen_x:]
-    #         tmp = tmp[:hyphen_x]
-    #     self.bare_label = tmp
-
-    def _get_trace_or_gap_index(self, label):
-        """Checks if label has gap or trace index.
-
-        (1) only trace index
-        IP-MAT-1
-
-        (2) only gap index
-        IP-MAT=2
-
-        (3) trace and gap
-        IP-MAT-1=2
-
-        (4) gap and trace (unexpected)
-        IP-MAT=2-1
-
-        Parameters
-        ==========
-        label: string
-            the nonterminal label
-        """
-        #  quick and sloppy code
-        self.gap_index = None
-        self.trace_index = None
-        highest_hyphen = label.rfind("-")
-        highest_equals = label.rfind("=")
-        ret = label
-        if highest_hyphen != -1 and highest_equals != -1:
-            if highest_hyphen > highest_equals:
-                # case 4
-                print("highest_hyphen > highest_equals %s" % (label,))
-                self._set_trace_index(label, highest_hyphen)
-                label = label[:highest_hyphen]
-                self._set_gap_index(label, highest_equals)
-                print("trace_index=%s gap_index=%s" % (self.trace_index, self.gap_index))
-                ret = label[:highest_equals]
-            else:
-                # case 3
-                self._set_gap_index(label, highest_equals)
-                ret = label[:highest_equals]
-        elif highest_hyphen != -1:
-            if self._set_trace_index(label, highest_hyphen):
-                # case 1
-                ret = label[:highest_hyphen]
-            else:
-                # just function tags, no indices
-                ret = label
-        elif highest_equals != -1:
-            # case 2
-            self._set_gap_index(label, highest_equals)
-            ret = label[:highest_equals]
-        return ret
-
-    def _set_trace_index(self, label, index_hyphen):
-        """Check if string after hyphen is int and if so sets trace index.
-
-        Parameters
-        ==========
-        label: string
-            the full nonterminal label
-        index_hyphen: int
-            index of -
-
-        Returns
-        =======
-        boolean: True if trace_index was set.
-        """
-        if self._is_int(label[index_hyphen+1:]):
-            self.trace_index = int(label[index_hyphen+1:])
-            return True
-        return False
-
-    def _set_gap_index(self, label, index_equals):
-        """Sets gap index.
-
-        Unlike with what comes after a hyphen, which could be a trace
-        index or ftag string, this has to be an integer.
-
-        Parameters
-        ==========
-        label: string
-            the full nonterminal label
-        index_equals: int
-            index of =
-        """
-        if self._is_int(label[index_equals+1:]):
-            self.gap_index = int(label[index_equals+1:])
-        else:
-            print("unexpected label2 %s %s " % (label, index_equals))
-            #sys.exit(-1)
-
-    @staticmethod
-    def _is_int(text):
-        """Just checks if text is integer."""
-        try:
-            _ = int(text)
-            return True
-        except ValueError:
-            return False
 
     def _assemble_full_label(self, options):
         """Put together components of nonterminal label"""
