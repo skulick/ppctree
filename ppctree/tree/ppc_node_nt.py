@@ -1,7 +1,13 @@
 import logging
+import re
 from ppctree.tree.ppc_node import PPCNode
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+
+# bare label can have $ at end, like PRO$
+# also allow for _NT at end which gets added on
+RE_LABEL_TRACE = re.compile(r'^(?P<bare>[A-Z]+\$?(_NT)?)(?P<ftags>(-[A-Z]+)+)*(=(?P<gap>[0-9]+))*$')
+RE_LABEL_GAP  = re.compile(r'^(?P<bare>[A-Z]+\$?(_NT)?)(?P<ftags>(-[A-Z]+)+)*(-(?P<trace>[0-9]+))*$')
 
 class PPCNodeNt(PPCNode):
     """Tree node that is a nonterminal.
@@ -66,14 +72,41 @@ class PPCNodeNt(PPCNode):
         return ret
 
     def parse_label(self, label):
-        """Parse the label for a nonterminal node."""
-        tmp = self._get_trace_or_gap_index(label)
-        self.ftags = ""
-        hyphen_x = tmp.find("-")
-        if hyphen_x > -1:
-            self.ftags = tmp[hyphen_x:]
-            tmp = tmp[:hyphen_x]
-        self.bare_label = tmp
+        # special case
+        if label in ('.', '._NT'):
+            print('period label')
+            self.bare_label = label
+            self.ftags = ''
+            self.trace_index = None
+            self.gap_index = None
+            return
+        
+        mtch = RE_LABEL_TRACE.search(label) or RE_LABEL_GAP.search(label)
+        assert mtch is not None, \
+            f'unable to parse {label}'
+        mdict = mtch.groupdict()
+
+        self.bare_label = mdict['bare']
+
+        self.ftags = mdict['ftags']
+        if self.ftags is None:
+            self.ftags = ''
+
+        tmp = mdict.get('trace', None)
+        self.trace_index = None if tmp is None else int(tmp)
+
+        tmp = mdict.get('gap', None)
+        self.gap_index = None if tmp is None else int(tmp)
+
+    # def parse_label(self, label):
+    #     """Parse the label for a nonterminal node."""
+    #     tmp = self._get_trace_or_gap_index(label)
+    #     self.ftags = ""
+    #     hyphen_x = tmp.find("-")
+    #     if hyphen_x > -1:
+    #         self.ftags = tmp[hyphen_x:]
+    #         tmp = tmp[:hyphen_x]
+    #     self.bare_label = tmp
 
     def _get_trace_or_gap_index(self, label):
         """Checks if label has gap or trace index.
