@@ -19,7 +19,7 @@ class PPCTree():
     nonempty_leaf_nodes: list of PPCNode
         the leaves that are not empty
     """
-    def __init__(self, line):
+    def __init__(self, line, assign_spans=True):
         """Initialize a tree structure from string or existing structure.
 
         Parameters
@@ -34,7 +34,8 @@ class PPCTree():
         self.nonempty_leaf_nodes = []
         self.all_leaf_nodes = []
         self.root.recurse_looking_for_leaves(self.nonempty_leaf_nodes, self.all_leaf_nodes)
-        self._assign_spans()
+        if assign_spans:
+            self._assign_spans()
 
     @staticmethod
     def parse_treestr(line):
