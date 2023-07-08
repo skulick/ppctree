@@ -8,7 +8,7 @@ class PPCNode(ABC):
 
     One of the three functions is_nonterminal, is_empty_leaf, is_nonempty_leaf
     needs to be overridden to return True. Of course this could also be done
-    with a node type Enum, or by checking the class of the object.
+    in different ways - property, etc.
 
     Attributes
     ==========
