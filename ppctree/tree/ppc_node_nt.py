@@ -78,7 +78,7 @@ class PPCNodeNt(PPCNode):
         """Parse label into bare_label, ftags, trace/gap"""
         # special case
         if label in ('.', '._NT'):
-            logger.info('period label')
+            logger.debug('period label')
             self.bare_label = label
             self.ftags = ''
             self.trace_index = None
