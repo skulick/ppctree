@@ -14,7 +14,7 @@ class PPCNodeEmptyT(PPCNode):
         """Make a nonempty terminal from the pos and word"""
         PPCNode.__init__(self)
         self.pos = pos
-        self.terminal_string = word
+        self.text = word
 
     @staticmethod
     def is_empty_leaf():
@@ -22,5 +22,5 @@ class PPCNodeEmptyT(PPCNode):
 
     def mystr(self,):
         """Return a one-line string version of the node."""
-        ret = f'({self.pos} {self.terminal_string})'
+        ret = f'({self.pos} {self.text})'
         return ret

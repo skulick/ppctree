@@ -19,7 +19,7 @@ class PPCTree():
     nonempty_leaf_nodes: list of PPCNode
         the leaves that are not empty
     """
-    def __init__(self, line, assign_spans=True):
+    def __init__(self, line, assign_spans=True, term_class=PPCNodeT):
         """Initialize a tree structure from string or existing structure.
 
         Parameters
@@ -29,7 +29,7 @@ class PPCTree():
             when converting from the existing .psd files, the tree string
             with CODE, etc. removed will be passed into here.
         """
-        self.root = self.parse_treestr(line)
+        self.root = self.parse_treestr(line, term_class)
 
         self.nonempty_leaf_nodes = []
         self.all_leaf_nodes = []
@@ -38,7 +38,7 @@ class PPCTree():
             self._assign_spans()
 
     @staticmethod
-    def parse_treestr(line):
+    def parse_treestr(line, term_class):
         """Convert string to a phrase structure tree.
 
         Parameters
@@ -76,11 +76,11 @@ class PPCTree():
                 if (len(cons) == 1 and
                     isinstance(cons[0], str)):
                     pos = parent_str
-                    terminal_string = cons[0]
+                    text = cons[0]
                     if pos == '-NONE-':
-                        parent = PPCNodeEmptyT(pos, terminal_string)
+                        parent = PPCNodeEmptyT(pos, text)
                     else:
-                        parent = PPCNodeT(pos, terminal_string)
+                        parent = term_class(pos, text)
                 else:
                     parent = PPCNodeNt(parent_str)
                     parent.set_children(cons)
