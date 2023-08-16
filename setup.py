@@ -1,11 +1,12 @@
 import setuptools
+import ppctree
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="ppctree",
-    version="0.1",
+    version=ppctree.__version__,
     description="tree handling for ppc work",
     long_description=long_description,
     long_description_content_type="text/markdown",

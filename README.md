@@ -1,7 +1,8 @@
 # Phrase Structure Tree manipulation
 
-This package consists of code for phrase structrue tree manipulation. It is intended to be used with
-[github/skulick/ppcprep](https://github.com/skulick/ppcprep.git).
+This package consists of code for phrase structure tree manipulation.
+It is intended to be used with work on historical Penn corpora,
+such as [github/skulick/ppchyprep](https://github.com/skulick/ppchyprep.git).
 
 ## Installation
 
