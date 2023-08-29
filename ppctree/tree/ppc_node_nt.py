@@ -4,10 +4,14 @@ from ppctree.tree.ppc_node import PPCNode
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
+# also allow for added _NT at end of bare label
 # bare label can have $ at end, like PRO$
-# also allow for _NT at end which gets added on
-RE_LABEL_TRACE = re.compile(r'^(?P<bare>[A-Z_]+\$?)(?P<ftags>(-[A-Z]+)+)*(-(?P<trace>[0-9]+))*$')
-RE_LABEL_GAP = re.compile(r'^(?P<bare>[A-Z_]+\$?)(?P<ftags>(-[A-Z]+)+)*(=(?P<gap>[0-9]+))*$')
+
+#RE_LABEL_TRACE = re.compile(r'^(?P<bare>[A-Z_]+\$?)(?P<ftags>(-[A-Z]+)+)*(-(?P<trace>[0-9]+))*$')
+#RE_LABEL_GAP = re.compile(r'^(?P<bare>[A-Z_]+\$?)(?P<ftags>(-[A-Z]+)+)*(=(?P<gap>[0-9]+))*$')
+
+RE_LABEL_TRACE = re.compile(r'^(?P<bare>[A-Z]+\$?(_NT)?)(?P<ftags>(-[A-Z]+)+)*(-(?P<trace>[0-9]+))*$')
+RE_LABEL_GAP = re.compile(r'^(?P<bare>[A-Z]+\$?(_NT)?)(?P<ftags>(-[A-Z]+)+)*(=(?P<gap>[0-9]+))*$')
 
 class PPCNodeNt(PPCNode):
     """Tree node that is a nonterminal.
